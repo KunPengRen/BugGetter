@@ -12,6 +12,7 @@ import requests
 from bs4 import BeautifulSoup
 import re
 import json
+import time
 
 #https://ieeexplore.ieee.org/search/searchresult.jsp?queryText=smart%20contract%20bugs&highlight=true&returnFacets=ALL&returnType=SEARCH&refinements=ContentType:Conferences&refinements=ContentType:Journals
 
@@ -146,16 +147,28 @@ def GithubMain():
 	gitInfo = dict()
 	pro1 = searchGit(KEYWORD1)
 	collectProjects(gitInfo, pro1)
+	print("Github key1 complete.")
+	time.sleep(5)
 	pro2 = searchGit(KEYWORD2)
 	collectProjects(gitInfo, pro2)
+	print("Github key2 complete.")
+	time.sleep(5)
 	pro3 = searchGit(KEYWORD3)
 	collectProjects(gitInfo, pro3)
+	print("Github key3 complete.")
+	time.sleep(5)
 	pro4 = searchGit(KEYWORD4)
 	collectProjects(gitInfo, pro4)
+	print("Github key4 complete.")
+	time.sleep(5)
 	pro5 = searchGit(KEYWORD5)
 	collectProjects(gitInfo, pro5)
+	print("Github key5 complete.")
+	time.sleep(5)
 	pro6 = searchGit(KEYWORD6)
 	collectProjects(gitInfo, pro6)
+	print("Github key6 complete.")
+	time.sleep(5)
 	print("Collected a total of ", len(gitInfo), " projects.")
 	f = open(GIT_FILE, "w+")
 	for proName in gitInfo.keys():
@@ -168,10 +181,17 @@ def GithubMain():
 	f.close()
 	return
 
+#ieee search
+def getIeeeTitle(_url):
+	page = requests.get(_url)
+	soup = BeautifulSoup(page.text, "lxml")
+	titles = soup.find_all(class_ = "result-item-title")
+	print(titles)
 
 #test code
 if __name__ == "__main__":
-	GithubMain()
+	#GithubMain()
+	getIeeeTitle("https://ieeexplore.ieee.org/search/searchresult.jsp?queryText=smart%20contract%20bugs&highlight=true&returnType=SEARCH&refinements=ContentType:Conferences&refinements=ContentType:Journals&returnFacets=ALL&rowsPerPage=50")
 
 
 
