@@ -183,15 +183,23 @@ def GithubMain():
 
 #ieee search
 def getIeeeTitle(_url):
-	page = requests.get(_url)
-	soup = BeautifulSoup(page.text, "lxml")
-	titles = soup.find_all(class_ = "result-item-title")
-	print(titles)
+    wb_data = requests.get(_url)
+    soup = BeautifulSoup(wb_data.text, 'lxml')
+    titles = soup.select('body > #LayoutWrapper')  # 解析题目列表
+    print(titles)
+    for title in titles:
+        temp = str(title.get_text())
+        print(temp)
+ 
+
+
+
+
 
 #test code
 if __name__ == "__main__":
 	#GithubMain()
-	getIeeeTitle("https://ieeexplore.ieee.org/search/searchresult.jsp?queryText=smart%20contract%20bugs&highlight=true&returnType=SEARCH&refinements=ContentType:Conferences&refinements=ContentType:Journals&returnFacets=ALL&rowsPerPage=50")
+	getIeeeTitle(r"https://ieeexplore.ieee.org/search/searchresult.jsp?queryText=smart%20contract%20bugs&highlight=false&returnType=SEARCH&refinements=ContentType:Conferences&refinements=ContentType:Journals&returnFacets=ALL&rowsPerPage=50")
 
 
 
