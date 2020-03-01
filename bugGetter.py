@@ -13,6 +13,7 @@ from bs4 import BeautifulSoup
 import re
 import json
 import time
+from selenium import webdriver
 
 #https://ieeexplore.ieee.org/search/searchresult.jsp?queryText=smart%20contract%20bugs&highlight=true&returnFacets=ALL&returnType=SEARCH&refinements=ContentType:Conferences&refinements=ContentType:Journals
 
@@ -183,13 +184,13 @@ def GithubMain():
 
 #ieee search
 def getIeeeTitle(_url):
-    wb_data = requests.get(_url)
-    soup = BeautifulSoup(wb_data.text, 'lxml')
-    titles = soup.select('body > #LayoutWrapper')  # 解析题目列表
-    print(titles)
-    for title in titles:
-        temp = str(title.get_text())
-        print(temp)
+	browser = webdriver.Chrome()	#use Chrome
+	browser.get(_url)
+	paperNum = browser.find_elements_by_xpath("//*[@href]")
+	time.sleep(5)
+	for item in paperNum:
+		num = item.get_attribute("href")
+		print(num)
  
 
 
