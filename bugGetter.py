@@ -38,7 +38,7 @@ ACM_SEARCH = ""
 KEYWORD1 = "smart contract bugs"
 KEYWORD2 = "smart contract problems"
 KEYWORD3 = "smart contract defects"
-KEYWORD4 = "smart contract vulnerability"
+KEYWORD4 = "smart contract vulnerabilities"
 #only for Github
 KEYWORD5 = "smart contract security"
 KEYWORD6 = "smart contract analysis tools"
@@ -183,25 +183,46 @@ def GithubMain():
 	return
 
 #ieee search
-def getIeeeTitle(_url):
+def getIeeeHref(_url):
+	paperList = list()
 	browser = webdriver.Chrome()	#use Chrome
 	browser.get(_url)
-	paperNum = browser.find_elements_by_xpath("//*[@href]")
 	time.sleep(5)
+	print(1)
+	js = 'window.scrollTo(0, document.body.scrollHeight);'
+	browser.execute_script(js)
+	print(2)
+	time.sleep(5)
+	browser.execute_script(js)
+	print(3)
+	paperNum = browser.find_elements_by_xpath("//*[@href]")
 	for item in paperNum:
-		num = item.get_attribute("href")
-		print(num)
- 
-
+		site = item.get_attribute("href")
+		paperList.append(site)
+	paperNum = getIeeeNumber(paperList)
+	return paperNum
+	
+#extract paper number from href
+def getIeeeNumber(_list):
+	paperNumber = set()
+	#p = re.compile("(.)+/arnumber=[1-9]{7}$")
+	for i in _list:
+		if "arnumber" in i:
+			num = i[-7:]
+			paperNumber.add(num)
+	print(len(paperNumber))
+	return paperNumber
+			
+#make ieee search url
+def makeIeeeUrl(_prefix, _suffix, _keyword):
+	text = _keyword.replace(" ", "%20")
+	return _prefix + text + _suffix
 
 
 
 
 #test code
 if __name__ == "__main__":
-	#GithubMain()
-	getIeeeTitle(r"https://ieeexplore.ieee.org/search/searchresult.jsp?queryText=smart%20contract%20bugs&highlight=false&returnType=SEARCH&refinements=ContentType:Conferences&refinements=ContentType:Journals&returnFacets=ALL&rowsPerPage=50")
-
-
-
+	GithubMain()
+	#getIeeeHref(r"https://ieeexplore.ieee.org/search/searchresult.jsp?queryText=smart%20contract%20bugs&highlight=false&returnType=SEARCH&refinements=ContentType:Conferences&refinements=ContentType:Journals&returnFacets=ALL&rowsPerPage=50")
  
