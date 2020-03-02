@@ -14,6 +14,9 @@ import re
 import json
 import time
 from selenium import webdriver
+import smtplib
+from email.mime.text import MIMEText
+from email.header import Header
 
 #https://ieeexplore.ieee.org/search/searchresult.jsp?queryText=smart%20contract%20bugs&highlight=true&returnFacets=ALL&returnType=SEARCH&refinements=ContentType:Conferences&refinements=ContentType:Journals
 
@@ -42,6 +45,12 @@ KEYWORD4 = "smart contract vulnerabilities"
 #only for Github
 KEYWORD5 = "smart contract security"
 KEYWORD6 = "smart contract analysis tools"
+
+#email address 
+#Confidentiality
+MSGRECEIVER = "123@foxmail.com"
+MSGSENDER = "456@163.com"
+MSGAuthorizationCode = "1"
 
 #functions
 
@@ -180,7 +189,58 @@ def GithubMain():
 		line += "\n"
 		f.write(line)
 	f.close()
+	changePro = updateChecker(gitInfo)
+	if len(changePro) != 0:
+		sendMail(changePro)
+	else:
+		print("No change.")
 	return
+
+#send mail
+def sendMail(_changePro):
+	text = str()
+	for item in _changePro:
+		text += str(item)
+		text += "\n"
+	#set mail content
+	message = MIMEText(text, "plain", "utf-8")
+	message["from"] = MSGSENDER #"15850673022@163.com"
+	message["to"] = MSGRECEIVER #"harleyxiao@foxmail.com"
+	message["Subject"] = Header("Github projects update.")
+	#set 163 mail server
+	smtpObj = smtplib.SMTP() 
+	smtpObj.connect("smtp.163.com")    
+	smtpObj.login(MSGSENDER, MSGAuthorizationCode)
+	smtpObj.sendmail(MSGSENDER, MSGRECEIVER, message.as_string())
+	print("Send mail successfully")
+
+
+#Update checker
+def updateChecker(_gitInfo):
+	f = open(GIT_FILE, "r", encoding = "utf-8")
+	old_Info = dict()
+	for i in f:
+		li = i.split()
+		old_Info[li[0]] = li[1]
+	f.close()
+	changePro = list()
+	for item in _gitInfo.keys():
+		if item not in old_Info.keys():
+			changePro.append(item)
+		elif _gitInfo[item] != old_Info[item]:
+			changePro.append(item)
+		else:
+			continue
+	return changePro
+	'''
+	if _gitInfo.keys() != old_Info.keys():
+		return True 
+	else:
+		for i in _gitInfo.keys():
+			if _gitInfo[i] != old_Info[i]:
+				return True 
+		return False
+	'''
 
 #ieee search
 def getIeeeHref(_url):
@@ -224,5 +284,6 @@ def makeIeeeUrl(_prefix, _suffix, _keyword):
 #test code
 if __name__ == "__main__":
 	GithubMain()
+	#updateChecker()
 	#getIeeeHref(r"https://ieeexplore.ieee.org/search/searchresult.jsp?queryText=smart%20contract%20bugs&highlight=false&returnType=SEARCH&refinements=ContentType:Conferences&refinements=ContentType:Journals&returnFacets=ALL&rowsPerPage=50")
  
